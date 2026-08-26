@@ -22,7 +22,7 @@ namespace Todos.Controllers
             return Ok(todos);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int:min(1)}")]
         [TypeFilter(typeof(ValidateTodoExistsAttribute))]
         public  ActionResult<Todo> Get(int id)
         {
@@ -38,7 +38,7 @@ namespace Todos.Controllers
             return CreatedAtAction(nameof(Get), new { id = createdTodo.Id }, createdTodo);
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:int:min(1)}")]
         [TypeFilter(typeof(ValidateTodoExistsAttribute))]
         public async Task<IActionResult> Put(int id, [FromBody] Todo todo)
         {
@@ -46,7 +46,7 @@ namespace Todos.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch("{id:int:min(1)}")]
         [TypeFilter(typeof(ValidateTodoExistsAttribute))]
         public async Task<IActionResult> Patch(int id, [FromBody] TodoPatchDto patchDto)
         {
@@ -61,7 +61,7 @@ namespace Todos.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int:min(1)}")]
         [TypeFilter(typeof(ValidateTodoExistsAttribute))]
         public IActionResult Delete(int id)
         {

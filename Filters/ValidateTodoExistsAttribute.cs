@@ -8,9 +8,9 @@ namespace Todos.Filters
     {
         private readonly ITodoService _todoService;
 
-        public ValidateTodoExistsAttribute(ITodoService taskService)
+        public ValidateTodoExistsAttribute(ITodoService todoService)
         {
-            _todoService = taskService;
+            _todoService = todoService;
         }
 
         public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
