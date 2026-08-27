@@ -1,12 +1,20 @@
 using Microsoft.AspNetCore.Rewrite;
 using Todos.Interfaces;
 using Todos.Services;
+using Todos.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<ITodoService, InMemoryTodoService>();
+var connectionString = builder.Configuration.GetConnectionString("Todo");
+
+builder.Services.AddDbContext<TodoContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<ITodoService, PostgresSqlTodoService>();
+
 
 var app = builder.Build();
 

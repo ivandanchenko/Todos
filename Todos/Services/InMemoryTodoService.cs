@@ -21,13 +21,13 @@ namespace Todos.Services
             _todos.Add(task);
             return Task.FromResult(task);
         }
-        public async Task<Todo?> Update(int id, Todo task)
+        public async Task<Todo?> Update(int id, Todo todo)
         {
             var existingTodo = await ReadById(id);
 
             if (existingTodo is null)
                 return null;
-            var todoToUpdate = task with { Id = id };
+            var todoToUpdate = todo with { Id = id };
 
             _todos.Remove(existingTodo);
             _todos.Add(todoToUpdate);
@@ -36,7 +36,7 @@ namespace Todos.Services
         }
         public Task Delete(int id)
         {
-            _todos.RemoveAll(task => id == task.Id);
+            _todos.RemoveAll(t => id == t.Id);
             return Task.CompletedTask;
         }
     }}
