@@ -1,15 +1,20 @@
 using Microsoft.AspNetCore.Rewrite;
-//using Microsoft.OpenApi;
 using Todos.Interfaces;
 using Todos.Services;
+using Todos.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<ITodoService, InMemoryTodoService>();
+var connectionString = builder.Configuration.GetConnectionString("Todo");
 
-//builder.Services.AddOpenApi(options => options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0);
+builder.Services.AddDbContext<TodoContext>(options =>
+    options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<ITodoService, PostgresSqlTodoService>();
+
 
 var app = builder.Build();
 
@@ -18,7 +23,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseRewriter(new RewriteOptions().AddRedirect("tasks/(.*)", "api/todos/$1"));
+app.UseRewriter(new RewriteOptions().AddRewrite(@"^tasks(?:/(.*))?$", "api/todos/$1", true));
 app.Use(async (context, next) => {
     Console.WriteLine($"[{context.Request.Method} {context.Request.Path} {DateTime.UtcNow}] Started.");
     await next(context);
