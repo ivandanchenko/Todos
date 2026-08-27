@@ -32,9 +32,9 @@ namespace Todos.Controllers
 
         [HttpPost]
         [TypeFilter(typeof(CreateTodoValidationFilter))]
-        public ActionResult<Todo> Post([FromBody] Todo todo)
+        public async Task<ActionResult<Todo>> Post([FromBody] Todo todo)
         {
-            var createdTodo = _todoService.Create(todo);
+            var createdTodo = await _todoService.Create(todo);
             return CreatedAtAction(nameof(Get), new { id = createdTodo.Id }, createdTodo);
         }
 

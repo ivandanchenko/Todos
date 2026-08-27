@@ -5,7 +5,7 @@ using Todos.Models;
 
 namespace Todos.Filters
 {
-    public class CreateTodoValidationFilter : ActionFilterAttribute
+    public class CreateTodoValidationFilter : IAsyncActionFilter
     {
         private readonly ITodoService _todoService;
 
@@ -14,7 +14,7 @@ namespace Todos.Filters
             _todoService = todoService;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
             var todo = context.ActionArguments.Values.OfType<Todo>().FirstOrDefault();
             if(todo is not null)
@@ -23,10 +23,12 @@ namespace Todos.Filters
 
                 if (todo.Id <= 0)
                     errors.Add(nameof(Todo.Id), ["ID must be a positive integer greater than zero."]);
-                
-                var IdExists=_todoService.ReadById(todo.Id).Result;
-                if(IdExists is not null)
-                    errors.Add(nameof(Todo.Id), [$"Todo with {todo.Id} already exists."]);
+                else
+                {
+                    var IdExists= await _todoService.ReadById(todo.Id);
+                    if(IdExists is not null)
+                        errors.Add(nameof(Todo.Id), [$"Todo with {todo.Id} already exists."]);
+                }
 
                 if (todo.DueDate < DateTime.UtcNow)
                     errors.Add(nameof(Todo.DueDate), ["Cannot have due date in the past."]);
@@ -41,6 +43,7 @@ namespace Todos.Filters
                     return;
                 }
             }
+            await next();
         }
     }
 }

@@ -4,7 +4,7 @@ using Todos.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddNewtonsoftJson();
+builder.Services.AddControllers();
 
 builder.Services.AddSingleton<ITodoService, InMemoryTodoService>();
 
